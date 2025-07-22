@@ -92,6 +92,7 @@
 <body>
   <div class="signup-container">
     <h2>إنشاء حساب جديد - Redx</h2>
+    <input type="text" id="username" placeholder="اسم المستخدم" required />
     <input type="email" id="email" placeholder="البريد الإلكتروني" required />
     <input type="password" id="password" placeholder="كلمة المرور" required />
     <div id="strength"></div>
@@ -103,6 +104,7 @@
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
 
   <script>
     // إعداد Firebase
@@ -118,6 +120,7 @@
 
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
+    const db = firebase.firestore();
 
     // فحص قوة كلمة المرور
     document.getElementById("password").addEventListener("input", function () {
@@ -129,14 +132,31 @@
       else strength.innerText = "كلمة المرور متوسطة ✔️";
     });
 
-    // إنشاء حساب جديد
+    // إنشاء حساب جديد مع تخزين اسم المستخدم في Firestore
     function signUp() {
+      const username = document.getElementById("username").value.trim();
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
       const message = document.getElementById("message");
 
+      if (!username) {
+        message.style.color = "red";
+        message.innerText = "❌ يرجى إدخال اسم مستخدم صالح";
+        return;
+      }
+
       auth.createUserWithEmailAndPassword(email, password)
         .then((userCredential) => {
+          const user = userCredential.user;
+
+          // حفظ اسم المستخدم في قاعدة Firestore تحت collection "users"
+          return db.collection('users').doc(user.uid).set({
+            username: username,
+            email: email,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        })
+        .then(() => {
           message.style.color = "lightgreen";
           message.innerText = "تم إنشاء الحساب بنجاح! سيتم تحويلك إلى تسجيل الدخول...";
           setTimeout(() => window.location.href = "index.html", 2500);
