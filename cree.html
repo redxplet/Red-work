@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <title>إنشاء حساب - Redx</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #1a1a1a, #3a3a3a);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .signup-container {
+      background-color: #222;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #ff3b3b;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      background: #333;
+      color: white;
+      font-size: 16px;
+    }
+
+    input::placeholder {
+      color: #bbb;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 8px;
+      background-color: #ff3b3b;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #e60000;
+    }
+
+    #strength {
+      font-size: 13px;
+      margin-top: 5px;
+      text-align: left;
+    }
+
+    #message {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    #back-to-login {
+      margin-top: 10px;
+      background-color: transparent;
+      border: none;
+      color: #ff3b3b;
+      cursor: pointer;
+      font-size: 14px;
+      text-decoration: underline;
+    }
+
+    #back-to-login:hover {
+      color: #e60000;
+    }
+  </style>
+</head>
+<body>
+  <div class="signup-container">
+    <h2>إنشاء حساب جديد - Redx</h2>
+    <input type="email" id="email" placeholder="البريد الإلكتروني" required />
+    <input type="password" id="password" placeholder="كلمة المرور" required />
+    <div id="strength"></div>
+    <button onclick="signUp()">إنشاء حساب</button>
+    <button id="back-to-login" onclick="location.href='index.html'">عودة لتسجيل الدخول</button>
+    <div id="message"></div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
+
+  <script>
+    // إعداد Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyBEwtxke6LOODN4iFA_1-3_5bDimSDxhmM",
+      authDomain: "background-4k-361b3.firebaseapp.com",
+      projectId: "background-4k-361b3",
+      storageBucket: "background-4k-361b3.firebasestorage.app",
+      messagingSenderId: "866282618326",
+      appId: "1:866282618326:web:a4c9b1526094b23002f877",
+      measurementId: "G-ETCTFXM3FV"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // فحص قوة كلمة المرور
+    document.getElementById("password").addEventListener("input", function () {
+      const val = this.value;
+      const strength = document.getElementById("strength");
+      if (val.length < 6) strength.innerText = "كلمة المرور ضعيفة جدًا ❌";
+      else if (val.match(/[0-9]/) && val.match(/[A-Z]/) && val.length >= 8)
+        strength.innerText = "كلمة المرور ممتازة ✅";
+      else strength.innerText = "كلمة المرور متوسطة ✔️";
+    });
+
+    // إنشاء حساب جديد
+    function signUp() {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const message = document.getElementById("message");
+
+      auth.createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          message.style.color = "lightgreen";
+          message.innerText = "تم إنشاء الحساب بنجاح! سيتم تحويلك إلى تسجيل الدخول...";
+          setTimeout(() => window.location.href = "index.html", 2500);
+        })
+        .catch((error) => {
+          message.style.color = "red";
+          message.innerText = "❌ خطأ: " + error.message;
+        });
+    }
+  </script>
+</body>
+</html>
