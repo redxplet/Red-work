@@ -49,7 +49,7 @@
     button {
       width: 100%;
       padding: 12px;
-      margin-top: 15px;
+      margin-top: 10px;
       border: none;
       border-radius: 8px;
       background-color: #ff3b3b;
@@ -63,19 +63,7 @@
       background-color: #e60000;
     }
 
-    #strength {
-      font-size: 13px;
-      margin-top: 5px;
-      text-align: left;
-    }
-
-    #message {
-      margin-top: 15px;
-      font-weight: bold;
-    }
-
-    #create-account {
-      margin-top: 10px;
+    .link-button {
       background-color: transparent;
       border: none;
       color: #ff3b3b;
@@ -84,8 +72,19 @@
       text-decoration: underline;
     }
 
-    #create-account:hover {
+    .link-button:hover {
       color: #e60000;
+    }
+
+    #strength, #message, #reset-message {
+      margin-top: 10px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    #reset-email {
+      display: none;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -96,7 +95,15 @@
     <input type="password" id="password" placeholder="كلمة المرور" required />
     <div id="strength"></div>
     <button onclick="login()">دخول</button>
-    <button id="create-account" onclick="location.href='cree.html'">إنشاء حساب جديد</button>
+    <button class="link-button" onclick="location.href='cree.html'">إنشاء حساب جديد</button>
+    <button class="link-button" onclick="toggleReset()">نسيت كلمة المرور؟</button>
+
+    <div id="reset-email">
+      <input type="email" id="resetEmailInput" placeholder="أدخل بريدك لاستعادة كلمة المرور" />
+      <button onclick="sendReset()">إرسال رابط الاستعادة</button>
+      <div id="reset-message"></div>
+    </div>
+
     <div id="message"></div>
   </div>
 
@@ -105,7 +112,6 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
 
   <script>
-    // إعداد Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyBEwtxke6LOODN4iFA_1-3_5bDimSDxhmM",
       authDomain: "background-4k-361b3.firebaseapp.com",
@@ -129,7 +135,6 @@
       else strength.innerText = "كلمة المرور متوسطة ✔️";
     });
 
-    // تسجيل الدخول
     function login() {
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
@@ -137,14 +142,39 @@
 
       auth.signInWithEmailAndPassword(email, password)
         .then((userCredential) => {
-          const user = userCredential.user;
           message.style.color = "lightgreen";
-          message.innerText = `مرحباً بعودتك يا ${email.split('@')[0]} 👋`;
+          message.innerText = "✅ تسجيل الدخول ناجح، يتم الآن التحويل...";
           setTimeout(() => window.location.href = "home.html", 1500);
         })
         .catch((error) => {
           message.style.color = "red";
           message.innerText = "❌ خطأ: " + error.message;
+        });
+    }
+
+    function toggleReset() {
+      const resetSection = document.getElementById("reset-email");
+      resetSection.style.display = resetSection.style.display === "none" ? "block" : "none";
+    }
+
+    function sendReset() {
+      const resetEmail = document.getElementById("resetEmailInput").value.trim();
+      const resetMessage = document.getElementById("reset-message");
+
+      if (!resetEmail) {
+        resetMessage.style.color = "red";
+        resetMessage.innerText = "❌ يرجى إدخال بريد إلكتروني صالح";
+        return;
+      }
+
+      auth.sendPasswordResetEmail(resetEmail)
+        .then(() => {
+          resetMessage.style.color = "lightgreen";
+          resetMessage.innerText = "📩 تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني";
+        })
+        .catch((error) => {
+          resetMessage.style.color = "red";
+          resetMessage.innerText = "❌ خطأ: " + error.message;
         });
     }
   </script>
