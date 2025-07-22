@@ -1,107 +1,131 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <title>Redx Login</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>تسجيل الدخول - Red Work Console</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal&display=swap');
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to bottom right, #1a1a1a, #3a3a3a);
-      color: white;
+      font-family: 'Tajawal', sans-serif;
+      background: linear-gradient(135deg, #0a66c2 0%, #004182 100%);
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      color: #fff;
     }
 
-    .login-container {
-      background-color: #222;
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
-      width: 100%;
-      max-width: 400px;
+    .container {
+      background: #fff;
+      color: #000;
+      width: 360px;
+      padding: 40px 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.3);
       text-align: center;
+    }
+
+    .logo {
+      margin-bottom: 25px;
+    }
+
+    .logo img {
+      width: 120px;
+      filter: drop-shadow(0 0 4px rgba(0,0,0,0.3));
     }
 
     h2 {
       margin-bottom: 20px;
-      color: #ff3b3b;
+      font-weight: 700;
+      font-size: 1.7rem;
+      color: #0a66c2;
     }
 
-    input {
+    input[type="email"],
+    input[type="password"] {
       width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border: none;
-      border-radius: 8px;
-      background: #333;
-      color: white;
-      font-size: 16px;
+      padding: 14px 15px;
+      margin: 10px 0 20px;
+      border: 1.5px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
     }
 
-    input::placeholder {
-      color: #bbb;
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+      border-color: #0a66c2;
+      outline: none;
+      box-shadow: 0 0 8px #0a66c2;
     }
 
     button {
       width: 100%;
-      padding: 12px;
-      margin-top: 10px;
+      padding: 14px 0;
+      background-color: #0a66c2;
       border: none;
-      border-radius: 8px;
-      background-color: #ff3b3b;
+      border-radius: 6px;
       color: white;
-      font-size: 16px;
+      font-size: 1.1rem;
+      font-weight: 600;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: background-color 0.3s ease;
+      margin-bottom: 15px;
     }
 
     button:hover {
-      background-color: #e60000;
+      background-color: #004182;
     }
 
-    .link-button {
-      background-color: transparent;
-      border: none;
-      color: #ff3b3b;
+    .links {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+    }
+
+    .links a {
+      color: #0a66c2;
+      text-decoration: none;
       cursor: pointer;
-      font-size: 14px;
+      transition: color 0.2s ease;
+    }
+
+    .links a:hover {
       text-decoration: underline;
+      color: #004182;
     }
 
-    .link-button:hover {
-      color: #e60000;
-    }
-
-    #strength, #message, #reset-message {
-      margin-top: 10px;
-      font-size: 14px;
-      text-align: center;
-    }
-
-    #reset-email {
-      display: none;
-      margin-top: 10px;
+    #message {
+      margin-top: 15px;
+      font-size: 0.95rem;
+      min-height: 22px;
     }
   </style>
 </head>
 <body>
-  <div class="login-container">
-    <h2>تسجيل الدخول - Redx</h2>
+  <div class="container">
+    <div class="logo">
+      <!-- ضع هنا شعارك -->
+      <img src="https://upload.wikimedia.org/wikipedia/commons/0/01/LinkedIn_Logo.svg" alt="شعار Red Work Console" />
+    </div>
+
+    <h2>تسجيل الدخول</h2>
+
     <input type="email" id="email" placeholder="البريد الإلكتروني" required />
     <input type="password" id="password" placeholder="كلمة المرور" required />
-    <div id="strength"></div>
-    <button onclick="login()">دخول</button>
-    <button class="link-button" onclick="location.href='cree.html'">إنشاء حساب جديد</button>
-    <button class="link-button" onclick="toggleReset()">نسيت كلمة المرور؟</button>
 
-    <div id="reset-email">
-      <input type="email" id="resetEmailInput" placeholder="أدخل بريدك لاستعادة كلمة المرور" />
-      <button onclick="sendReset()">إرسال رابط الاستعادة</button>
-      <div id="reset-message"></div>
+    <button onclick="login()">دخول</button>
+
+    <div class="links">
+      <a href="cree.html">إنشاء حساب جديد</a>
+      <a href="forgot-password.html">نسيت كلمة المرور؟</a>
     </div>
 
     <div id="message"></div>
@@ -125,56 +149,29 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    // فحص قوة كلمة المرور
-    document.getElementById("password").addEventListener("input", function () {
-      const val = this.value;
-      const strength = document.getElementById("strength");
-      if (val.length < 6) strength.innerText = "كلمة المرور ضعيفة جدًا ❌";
-      else if (val.match(/[0-9]/) && val.match(/[A-Z]/) && val.length >= 8)
-        strength.innerText = "كلمة المرور ممتازة ✅";
-      else strength.innerText = "كلمة المرور متوسطة ✔️";
-    });
-
     function login() {
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
       const message = document.getElementById("message");
 
-      auth.signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-          message.style.color = "lightgreen";
-          message.innerText = "✅ تسجيل الدخول ناجح، يتم الآن التحويل...";
-          setTimeout(() => window.location.href = "home.html", 1500);
-        })
-        .catch((error) => {
-          message.style.color = "red";
-          message.innerText = "❌ خطأ: " + error.message;
-        });
-    }
+      message.style.color = "#d00"; // افتراضياً لون الخط أحمر للأخطاء
+      message.textContent = "";
 
-    function toggleReset() {
-      const resetSection = document.getElementById("reset-email");
-      resetSection.style.display = resetSection.style.display === "none" ? "block" : "none";
-    }
-
-    function sendReset() {
-      const resetEmail = document.getElementById("resetEmailInput").value.trim();
-      const resetMessage = document.getElementById("reset-message");
-
-      if (!resetEmail) {
-        resetMessage.style.color = "red";
-        resetMessage.innerText = "❌ يرجى إدخال بريد إلكتروني صالح";
+      if (!email || !password) {
+        message.textContent = "يرجى إدخال البريد الإلكتروني وكلمة المرور";
         return;
       }
 
-      auth.sendPasswordResetEmail(resetEmail)
-        .then(() => {
-          resetMessage.style.color = "lightgreen";
-          resetMessage.innerText = "📩 تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني";
+      auth.signInWithEmailAndPassword(email, password)
+        .then(userCredential => {
+          message.style.color = "green";
+          message.textContent = `مرحباً بعودتك، ${email.split('@')[0]} 👋`;
+          setTimeout(() => {
+            window.location.href = "home.html";
+          }, 1500);
         })
-        .catch((error) => {
-          resetMessage.style.color = "red";
-          resetMessage.innerText = "❌ خطأ: " + error.message;
+        .catch(error => {
+          message.textContent = "خطأ: " + error.message;
         });
     }
   </script>
