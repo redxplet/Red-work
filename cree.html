@@ -2,12 +2,12 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8" />
-  <title>إنشاء حساب - Redx</title>
+  <title>إنشاء حساب - Red Work Console</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(to bottom right, #1a1a1a, #3a3a3a);
       color: white;
       display: flex;
@@ -91,7 +91,7 @@
 </head>
 <body>
   <div class="signup-container">
-    <h2>إنشاء حساب جديد - Redx</h2>
+    <h2>إنشاء حساب جديد - Red Work Console</h2>
     <input type="text" id="username" placeholder="اسم المستخدم" required />
     <input type="email" id="email" placeholder="البريد الإلكتروني" required />
     <input type="password" id="password" placeholder="كلمة المرور" required />
@@ -107,7 +107,6 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
 
   <script>
-    // إعداد Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyBEwtxke6LOODN4iFA_1-3_5bDimSDxhmM",
       authDomain: "background-4k-361b3.firebaseapp.com",
@@ -132,7 +131,6 @@
       else strength.innerText = "كلمة المرور متوسطة ✔️";
     });
 
-    // إنشاء حساب جديد مع تخزين اسم المستخدم في Firestore
     function signUp() {
       const username = document.getElementById("username").value.trim();
       const email = document.getElementById("email").value.trim();
@@ -148,8 +146,6 @@
       auth.createUserWithEmailAndPassword(email, password)
         .then((userCredential) => {
           const user = userCredential.user;
-
-          // حفظ اسم المستخدم في قاعدة Firestore تحت collection "users"
           return db.collection('users').doc(user.uid).set({
             username: username,
             email: email,
