@@ -1,167 +1,148 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
+
 <head>
   <meta charset="UTF-8" />
-  <title>إنشاء حساب - Red Work Console</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Red Work - إنشاء حساب</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet" />
   <style>
     body {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to bottom right, #1a1a1a, #3a3a3a);
-      color: white;
+      font-family: 'Poppins', sans-serif;
+      background-color: #ffffff;
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      position: relative;
+      overflow: hidden;
     }
 
-    .signup-container {
-      background-color: #222;
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+    /* خلفية الزليج تكرار */
+    .zellij-pattern {
+      position: fixed;
+      inset: 0;
       width: 100%;
-      max-width: 400px;
-      text-align: center;
+      height: 100%;
+      opacity: 0.35;
+      z-index: 0;
+    }
+
+    .create-container {
+      position: relative;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 40px 50px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      width: 350px;
+      z-index: 1;
     }
 
     h2 {
       margin-bottom: 20px;
-      color: #ff3b3b;
+      color: #333;
+      text-align: center;
     }
 
-    input {
+    input[type="email"],
+    input[type="password"] {
       width: 100%;
-      padding: 12px;
+      padding: 12px 15px;
       margin: 10px 0;
-      border: none;
+      border: 1px solid #ccc;
       border-radius: 8px;
-      background: #333;
-      color: white;
       font-size: 16px;
-    }
-
-    input::placeholder {
-      color: #bbb;
     }
 
     button {
-      width: 100%;
+      margin-top: 20px;
       padding: 12px;
-      margin-top: 15px;
+      width: 100%;
       border: none;
       border-radius: 8px;
-      background-color: #ff3b3b;
+      background-color: #457b9d;
       color: white;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    button:hover {
-      background-color: #e60000;
-    }
-
-    #strength {
-      font-size: 13px;
-      margin-top: 5px;
-      text-align: left;
-    }
-
-    #message {
-      margin-top: 15px;
       font-weight: bold;
-    }
-
-    #back-to-login {
-      margin-top: 10px;
-      background-color: transparent;
-      border: none;
-      color: #ff3b3b;
       cursor: pointer;
-      font-size: 14px;
-      text-decoration: underline;
+      font-size: 16px;
     }
 
-    #back-to-login:hover {
-      color: #e60000;
+    .login-link {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 14px;
+      color: #555;
+    }
+
+    .login-link a {
+      color: #457b9d;
+      text-decoration: none;
+      font-weight: bold;
     }
   </style>
 </head>
+
 <body>
-  <div class="signup-container">
-    <h2>إنشاء حساب جديد - Red Work Console</h2>
-    <input type="text" id="username" placeholder="اسم المستخدم" required />
-    <input type="email" id="email" placeholder="البريد الإلكتروني" required />
-    <input type="password" id="password" placeholder="كلمة المرور" required />
-    <div id="strength"></div>
-    <button onclick="signUp()">إنشاء حساب</button>
-    <button id="back-to-login" onclick="location.href='index.html'">عودة لتسجيل الدخول</button>
-    <div id="message"></div>
+  <!-- خلفية الزليج كاملة -->
+  <svg class="zellij-pattern" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
+    <defs>
+      <pattern id="moroccanZellij" width="40" height="40" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <rect x="0" y="0" width="20" height="20" fill="#d62828" />
+        <rect x="20" y="20" width="20" height="20" fill="#1d3557" />
+        <polygon points="0,20 10,10 20,20 10,30" fill="#f1faee" />
+        <circle cx="10" cy="10" r="5" fill="#a8dadc" />
+      </pattern>
+    </defs>
+    <rect width="200" height="200" fill="url(#moroccanZellij)" />
+  </svg>
+
+  <div class="create-container">
+    <h2>إنشاء حساب جديد</h2>
+    <input type="email" id="email" placeholder="البريد الإلكتروني" />
+    <input type="password" id="password" placeholder="كلمة المرور" />
+    <button onclick="createAccount()">إنشاء حساب</button>
+    <div class="login-link">
+      لديك حساب؟ <a href="login.html">تسجيل الدخول</a>
+    </div>
   </div>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-  <script>
     const firebaseConfig = {
       apiKey: "AIzaSyBEwtxke6LOODN4iFA_1-3_5bDimSDxhmM",
       authDomain: "background-4k-361b3.firebaseapp.com",
       projectId: "background-4k-361b3",
       storageBucket: "background-4k-361b3.firebasestorage.app",
       messagingSenderId: "866282618326",
-      appId: "1:866282618326:web:a4c9b1526094b23002f877",
-      measurementId: "G-ETCTFXM3FV"
+      appId: "1:866282618326:web:4e0030b0afce331702f877",
+      measurementId: "G-RXZKVBB7ZF",
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
 
-    // فحص قوة كلمة المرور
-    document.getElementById("password").addEventListener("input", function () {
-      const val = this.value;
-      const strength = document.getElementById("strength");
-      if (val.length < 6) strength.innerText = "كلمة المرور ضعيفة جدًا ❌";
-      else if (val.match(/[0-9]/) && val.match(/[A-Z]/) && val.length >= 8)
-        strength.innerText = "كلمة المرور ممتازة ✅";
-      else strength.innerText = "كلمة المرور متوسطة ✔️";
-    });
-
-    function signUp() {
-      const username = document.getElementById("username").value.trim();
+    window.createAccount = () => {
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
-      const message = document.getElementById("message");
 
-      if (!username) {
-        message.style.color = "red";
-        message.innerText = "❌ يرجى إدخال اسم مستخدم صالح";
+      if (!email || !password) {
+        alert("الرجاء إدخال البريد الإلكتروني وكلمة المرور");
         return;
       }
 
-      auth.createUserWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-          const user = userCredential.user;
-          return db.collection('users').doc(user.uid).set({
-            username: username,
-            email: email,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
-        })
+      createUserWithEmailAndPassword(auth, email, password)
         .then(() => {
-          message.style.color = "lightgreen";
-          message.innerText = "تم إنشاء الحساب بنجاح! سيتم تحويلك إلى تسجيل الدخول...";
-          setTimeout(() => window.location.href = "index.html", 2500);
+          alert("تم إنشاء الحساب بنجاح! جاري التحويل...");
+          window.location.href = "index.html"; // تحويل للصفحة الرئيسية بعد التسجيل
         })
         .catch((error) => {
-          message.style.color = "red";
-          message.innerText = "❌ خطأ: " + error.message;
+          alert("خطأ: " + error.message);
         });
-    }
+    };
   </script>
 </body>
+
 </html>
