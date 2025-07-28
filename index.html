@@ -1,139 +1,96 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
-
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Red Work - تسجيل الدخول</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <title>تسجيل الدخول - Redx</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      margin: 0;
-      font-family: 'Poppins', sans-serif;
-      background-color: #ffffff;
-      height: 100vh;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f5f5;
       display: flex;
       justify-content: center;
       align-items: center;
-      position: relative;
-      overflow: hidden;
+      height: 100vh;
     }
-
-    /* الزليج يغطي الخلفية كاملة */
-    .zellij-pattern {
-      position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      opacity: 0.35; /* زيدنا الشفافية عشان الألوان أوضح */
-      z-index: 0;
-    }
-
-    /* صندوق النموذج فوق الزليج */
-    .login-container {
-      position: relative;
-      background: rgba(255, 255, 255, 0.9); /* خلفية بيضاء شبه شفافة */
-      padding: 40px 50px;
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-      width: 350px;
-      z-index: 1;
-    }
-
-    h2 {
-      margin-bottom: 20px;
-      color: #333;
+    .container {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+      width: 300px;
       text-align: center;
     }
-
-    input[type="email"],
-    input[type="password"] {
+    input {
       width: 100%;
-      padding: 12px 15px;
+      padding: 10px;
       margin: 10px 0;
       border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 16px;
+      border-radius: 6px;
     }
-
     button {
-      margin-top: 20px;
-      padding: 12px;
       width: 100%;
-      border: none;
-      border-radius: 8px;
-      background-color: #e63946;
+      padding: 10px;
+      background: #3f51b5;
       color: white;
-      font-weight: bold;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
-      font-size: 16px;
     }
-
-    .signup-link {
+    button:hover {
+      background: #2c3ea0;
+    }
+    a {
+      display: block;
       margin-top: 15px;
-      text-align: center;
-      font-size: 14px;
-      color: #555;
-    }
-
-    .signup-link a {
-      color: #e63946;
+      color: #3f51b5;
       text-decoration: none;
-      font-weight: bold;
+      font-size: 0.9rem;
     }
   </style>
 </head>
-
 <body>
-  <!-- خلفية الزليج كاملة -->
-  <svg class="zellij-pattern" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
-    <defs>
-      <pattern id="moroccanZellij" width="40" height="40" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-        <rect x="0" y="0" width="20" height="20" fill="#d62828" />
-        <rect x="20" y="20" width="20" height="20" fill="#1d3557" />
-        <polygon points="0,20 10,10 20,20 10,30" fill="#f1faee" />
-        <circle cx="10" cy="10" r="5" fill="#a8dadc" />
-      </pattern>
-    </defs>
-    <rect width="200" height="200" fill="url(#moroccanZellij)" />
-  </svg>
 
-  <!-- صندوق تسجيل الدخول -->
-  <div class="login-container">
-    <h2>مرحبًا بعودتك إلى Red Work</h2>
-    <input type="email" id="email" placeholder="البريد الإلكتروني" />
-    <input type="password" id="password" placeholder="كلمة المرور" />
+  <div class="container">
+    <h2>مرحباً بعودتك</h2>
+    <input type="email" id="email" placeholder="البريد الإلكتروني">
+    <input type="password" id="password" placeholder="كلمة المرور">
     <button onclick="login()">تسجيل الدخول</button>
-    <div class="signup-link">
-      لا تملك حسابًا؟ <a href="cree.html">أنشئ حسابًا</a>
-    </div>
+    <a href="cree.html">ليس لديك حساب؟ أنشئ حساب</a>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
+  <script>
+    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyBEwtxke6LOODN4iFA_1-3_5bDimSDxhmM",
       authDomain: "background-4k-361b3.firebaseapp.com",
       projectId: "background-4k-361b3",
-      storageBucket: "background-4k-361b3.firebasestorage.app",
+      storageBucket: "background-4k-361b3.appspot.com",
       messagingSenderId: "866282618326",
       appId: "1:866282618326:web:4e0030b0afce331702f877",
-      measurementId: "G-RXZKVBB7ZF",
+      measurementId: "G-RXZKVBB7ZF"
     };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    window.login = () => {
+    // Login function
+    function login() {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
-      signInWithEmailAndPassword(auth, email, password)
-        .then(() => alert("تم تسجيل الدخول بنجاح!"))
-        .catch((e) => alert("خطأ: " + e.message));
-    };
-  </script>
-</body>
 
+      auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          window.location.href = "home.html";
+        })
+        .catch((error) => {
+          alert("فشل تسجيل الدخول: " + error.message);
+        });
+    }
+  </script>
+
+</body>
 </html>
