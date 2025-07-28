@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>حفظ الملف الشخصي - Red Work</title>
+  <title>حفظ الملف الشخصي مع رفع المشاريع</title>
   <style>
     body {
       font-family: 'Arial', sans-serif;
@@ -12,6 +12,21 @@
       padding: 20px;
       display: flex;
       justify-content: center;
+      position: relative;
+      min-height: 100vh;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: repeating-conic-gradient(
+        #d62828 0deg 45deg,
+        #1d3557 45deg 90deg,
+        #f1faee 90deg 135deg,
+        #a8dadc 135deg 180deg
+      );
+      opacity: 0.15;
+      z-index: 0;
     }
     .container {
       background: #fff;
@@ -20,6 +35,8 @@
       box-shadow: 0 0 15px rgba(0,0,0,0.1);
       max-width: 400px;
       width: 100%;
+      position: relative;
+      z-index: 1;
     }
     h2 {
       text-align: center;
@@ -40,6 +57,9 @@
       border-radius: 7px;
       font-size: 16px;
       box-sizing: border-box;
+    }
+    input[type="file"] {
+      padding: 6px;
     }
     button {
       width: 100%;
@@ -78,8 +98,10 @@
       <option value="تصوير فوتوغرافي">تصوير فوتوغرافي</option>
       <option value="مونتاج سينمائي">مونتاج سينمائي</option>
       <option value="الذكاء الاصطناعي">الذكاء الاصطناعي</option>
-      <!-- أضف المزيد حسب الحاجة -->
     </select>
+
+    <label for="projects">أمثلة على مشاريعك:</label>
+    <input type="file" id="projects" multiple accept=".jpg,.png,.pdf,.zip,.mp4,.mov,.gif,.webp,.fig,.xd,.psd,.ai,.mp3,.wav,.docx,.pptx,.txt" />
 
     <button id="saveBtn">حفظ الملف الشخصي</button>
   </div>
@@ -87,6 +109,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBEwtxke6LOODN4iFA_1-3_5bDimSDxhmM",
@@ -100,27 +123,43 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const storage = getStorage(app);
 
-    const saveBtn = document.getElementById('saveBtn');
-    saveBtn.addEventListener('click', async () => {
+    document.getElementById('saveBtn').addEventListener('click', async () => {
       const name = document.getElementById('name').value.trim();
       const field = document.getElementById('field').value;
+      const projectsInput = document.getElementById('projects');
+      const files = projectsInput.files;
 
       if (!name || !field) {
-        alert('يرجى ملء جميع الحقول');
+        alert('يرجى ملء الاسم والمجال');
         return;
       }
 
       try {
+        // رفع الملفات إلى Storage وجلب روابطها
+        const urls = [];
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          const storageRef = ref(storage, `projects/${Date.now()}_${file.name}`);
+          await uploadBytes(storageRef, file);
+          const url = await getDownloadURL(storageRef);
+          urls.push(url);
+        }
+
+        // حفظ البيانات في Firestore مع روابط الملفات
         await addDoc(collection(db, 'profiles'), {
           name: name,
           field: field,
+          projectFiles: urls,
           createdAt: new Date()
         });
-        alert('تم حفظ الملف الشخصي بنجاح!');
-        // إعادة تعيين الحقول
+
+        alert('تم حفظ الملف الشخصي ورفع المشاريع بنجاح!');
         document.getElementById('name').value = '';
         document.getElementById('field').value = '';
+        projectsInput.value = '';
+
       } catch (error) {
         alert('حدث خطأ أثناء الحفظ: ' + error.message);
       }
