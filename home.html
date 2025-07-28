@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>حفظ الملف الشخصي - Red Work</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+    .container {
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      max-width: 400px;
+      width: 100%;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 7px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #0a66c2;
+      border: none;
+      color: white;
+      font-weight: bold;
+      font-size: 17px;
+      cursor: pointer;
+      border-radius: 7px;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #004182;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>ملفك الشخصي في Red Work</h2>
+    <label for="name">الاسم الكامل:</label>
+    <input type="text" id="name" placeholder="أدخل اسمك الكامل" />
+
+    <label for="field">مجال التخصص:</label>
+    <select id="field">
+      <option value="">اختر مجالك</option>
+      <option value="تصميم جرافيك">تصميم جرافيك</option>
+      <option value="تصميم واجهات UI/UX">تصميم واجهات UI/UX</option>
+      <option value="برمجة ويب">برمجة ويب</option>
+      <option value="برمجة تطبيقات موبايل">برمجة تطبيقات موبايل</option>
+      <option value="تحرير فيديو">تحرير فيديو</option>
+      <option value="تصميم داخلي">تصميم داخلي</option>
+      <option value="تصميم ألعاب">تصميم ألعاب</option>
+      <option value="كتابة محتوى">كتابة محتوى</option>
+      <option value="تصوير فوتوغرافي">تصوير فوتوغرافي</option>
+      <option value="مونتاج سينمائي">مونتاج سينمائي</option>
+      <option value="الذكاء الاصطناعي">الذكاء الاصطناعي</option>
+      <!-- أضف المزيد حسب الحاجة -->
+    </select>
+
+    <button id="saveBtn">حفظ الملف الشخصي</button>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBEwtxke6LOODN4iFA_1-3_5bDimSDxhmM",
+      authDomain: "background-4k-361b3.firebaseapp.com",
+      projectId: "background-4k-361b3",
+      storageBucket: "background-4k-361b3.firebasestorage.app",
+      messagingSenderId: "866282618326",
+      appId: "1:866282618326:web:4e0030b0afce331702f877",
+      measurementId: "G-RXZKVBB7ZF"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const saveBtn = document.getElementById('saveBtn');
+    saveBtn.addEventListener('click', async () => {
+      const name = document.getElementById('name').value.trim();
+      const field = document.getElementById('field').value;
+
+      if (!name || !field) {
+        alert('يرجى ملء جميع الحقول');
+        return;
+      }
+
+      try {
+        await addDoc(collection(db, 'profiles'), {
+          name: name,
+          field: field,
+          createdAt: new Date()
+        });
+        alert('تم حفظ الملف الشخصي بنجاح!');
+        // إعادة تعيين الحقول
+        document.getElementById('name').value = '';
+        document.getElementById('field').value = '';
+      } catch (error) {
+        alert('حدث خطأ أثناء الحفظ: ' + error.message);
+      }
+    });
+  </script>
+</body>
+</html>
